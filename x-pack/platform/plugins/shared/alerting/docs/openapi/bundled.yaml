@@ -11,6 +11,106 @@ info:
 servers:
   - url: /
 paths:
+  /api/alerting/maintenance_window:
+    post:
+      summary: Create a maintenance window with a random identifier
+      operationId: createRule
+      description: |
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+      tags:
+        - alerting
+      parameters:
+        - $ref: '#/components/parameters/kbn_xsrf'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_maintenance_window_request'
+      responses:
+        '200':
+          description: Indicates a successful call.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/maintenance_window_response_properties'
+        '400':
+          description: Indicates an invalid schema or parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400_response'
+        '403':
+          description: Indicates that this call is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403_response'
+  /api/alerting/maintenance_window/{maintenanceWindowId}:
+    get:
+      summary: Get maintenance window details
+      operationId: getMaintenanceWindow
+      description: You must have `read` privileges for the appropriate Kibana features.
+      tags:
+        - alerting
+      parameters:
+        - $ref: '#/components/parameters/maintenance_window_id'
+      responses:
+        '200':
+          description: Indicates a successful call.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/maintenance_window_response_properties'
+        '400':
+          description: Indicates an invalid schema or parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400_response'
+        '403':
+          description: Indicates that this call is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403_response'
+        '404':
+          description: Object is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404_response'
+    delete:
+      summary: Delete a maintenance window
+      operationId: deleteMaintenanceWindow
+      description: |
+        To delete a rule, you must have `all` privileges for the appropriate Kibana features. WARNING: After you delete a maintenance window, you cannot recover it.
+      tags:
+        - alerting
+      parameters:
+        - $ref: '#/components/parameters/kbn_xsrf'
+        - $ref: '#/components/parameters/maintenance_window_id'
+      responses:
+        '204':
+          description: Indicates a successful call.
+        '400':
+          description: Indicates an invalid schema or parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400_response'
+        '403':
+          description: Indicates that this call is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403_response'
+        '404':
+          description: Object is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404_response'
   /api/alerting/_health:
     get:
       summary: Get the alerting framework health
@@ -354,6 +454,201 @@ paths:
               schema:
                 $ref: '#/components/schemas/401_response'
 components:
+  parameters:
+    kbn_xsrf:
+      schema:
+        type: string
+      in: header
+      name: kbn-xsrf
+      description: Cross-site request forgery protection
+      required: true
+    maintenance_window_id:
+      in: path
+      name: maintenanceWindowId
+      description: An identifier for the maintenance window.
+      required: true
+      schema:
+        type: string
+        example: ac4e6b90-6be7-11eb-ba0d-9b1c1f912d74
+  schemas:
+    create_maintenance_window_request:
+      title: Create maintenance window request body properties
+      description: The properties used to create a maintenance window.
+      type: object
+      required:
+        - title
+        - start
+        - duration
+      properties:
+        title:
+          type: string
+          description: |
+            The name of the maintenance window. While this name does not have to be unique, a distinctive name can help you identify a maintenance window.
+        enabled:
+          type: boolean
+          description: Indicates whether the maintenance window is currently enabled.
+          example: true
+        duration:
+          type: number
+        start:
+          type: string
+          description: An ISO date.
+    maintenance_window_response_properties:
+      title: Maintenance window response properties
+      type: object
+      required:
+        - id
+        - title
+        - enabled
+        - created_by
+        - created_at
+        - updated_by
+        - updated_at
+        - status
+      properties:
+        id:
+          type: string
+          description: The identifier for the maintenance window.
+          example: b530fed0-74f5-11ed-9801-35303b735aef
+        title:
+          type: string
+          description: The name of the maintenance window.
+          example: ESQuery Maintenance Window
+        enabled:
+          type: boolean
+          description: Indicates whether the maintenance window is currently enabled.
+          example: true
+        created_by:
+          type: string
+          description: The identifier for the user that created the maintenance window.
+          nullable: true
+          example: elastic
+        created_at:
+          type: string
+          description: The date and time in which the maintenance window was created.
+          format: date-time
+          example: '2022-12-05T23:36:58.284Z'
+        updated_by:
+          type: string
+          description: The identifier for the user that updated this maintenance window most recently.
+          nullable: true
+          example: elastic
+        updated_at:
+          type: string
+          description: The date and time that the maintenance window was updated most recently.
+          example: '2022-12-05T23:36:58.284Z'
+        status:
+          type: string
+          description: The status of the maintenance window. One of the following values `running`, `upcoming`, `finished` or `archived`.
+          example: running
+    400_response:
+      title: Bad request
+      type: object
+      required:
+        - error
+        - message
+        - statusCode
+      properties:
+        error:
+          type: string
+          enum:
+            - Bad Request
+        message:
+          type: string
+        statusCode:
+          type: integer
+          enum:
+            - 400
+    403_response:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          example: 403
+          description: Error status code
+        error:
+          type: string
+          example: Forbidden
+          description: Error type
+        message:
+          type: string
+          description: Error message
+    404_response:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Not Found
+          enum:
+            - Not Found
+        message:
+          type: string
+          example: Saved object [alert/caaad6d0-920c-11ed-b36a-874bd1548a00] not found
+        statusCode:
+          type: integer
+          example: 404
+          enum:
+            - 404
+    401_response:
+      type: object
+      title: Unsuccessful rule API response
+      properties:
+        error:
+          type: string
+          example: Unauthorized
+          enum:
+            - Unauthorized
+        message:
+          type: string
+        statusCode:
+          type: integer
+          example: 401
+          enum:
+            - 401
+    fieldmap_properties:
+      title: Field map objects in the get rule types response
+      type: object
+      properties:
+        array:
+          type: boolean
+          description: Indicates whether the field is an array.
+        dynamic:
+          type: boolean
+          description: Indicates whether it is a dynamic field mapping.
+        format:
+          type: string
+          description: |
+            Indicates the format of the field. For example, if the `type` is `date_range`, the `format` can be `epoch_millis||strict_date_optional_time`.
+        ignore_above:
+          type: integer
+          description: Specifies the maximum length of a string field. Longer strings are not indexed or stored.
+        index:
+          type: boolean
+          description: Indicates whether field values are indexed.
+        path:
+          type: string
+          description: TBD
+        properties:
+          type: object
+          description: |
+            Details about the object properties. This property is applicable when `type` is `object`.
+          additionalProperties:
+            type: object
+            properties:
+              type:
+                type: string
+                description: The data type for each object property.
+        required:
+          type: boolean
+          description: Indicates whether the field is required.
+        scaling_factor:
+          type: integer
+          description: |
+            The scaling factor to use when encoding values. This property is applicable when `type` is `scaled_float`. Values will be multiplied by this factor at index time and rounded to the closest long value. 
+        type:
+          type: string
+          description: Specifies the data type for the field.
+          example: scaled_float
   examples:
     get_health_response:
       summary: Retrieve information about the health of the alerting framework.
@@ -591,64 +886,3 @@ components:
           does_set_recovery_context: true
           has_alerts_mappings: false
           has_fields_for_a_a_d: false
-  schemas:
-    401_response:
-      type: object
-      title: Unsuccessful rule API response
-      properties:
-        error:
-          type: string
-          example: Unauthorized
-          enum:
-            - Unauthorized
-        message:
-          type: string
-        statusCode:
-          type: integer
-          example: 401
-          enum:
-            - 401
-    fieldmap_properties:
-      title: Field map objects in the get rule types response
-      type: object
-      properties:
-        array:
-          type: boolean
-          description: Indicates whether the field is an array.
-        dynamic:
-          type: boolean
-          description: Indicates whether it is a dynamic field mapping.
-        format:
-          type: string
-          description: |
-            Indicates the format of the field. For example, if the `type` is `date_range`, the `format` can be `epoch_millis||strict_date_optional_time`.
-        ignore_above:
-          type: integer
-          description: Specifies the maximum length of a string field. Longer strings are not indexed or stored.
-        index:
-          type: boolean
-          description: Indicates whether field values are indexed.
-        path:
-          type: string
-          description: TBD
-        properties:
-          type: object
-          description: |
-            Details about the object properties. This property is applicable when `type` is `object`.
-          additionalProperties:
-            type: object
-            properties:
-              type:
-                type: string
-                description: The data type for each object property.
-        required:
-          type: boolean
-          description: Indicates whether the field is required.
-        scaling_factor:
-          type: integer
-          description: |
-            The scaling factor to use when encoding values. This property is applicable when `type` is `scaled_float`. Values will be multiplied by this factor at index time and rounded to the closest long value. 
-        type:
-          type: string
-          description: Specifies the data type for the field.
-          example: scaled_float

@@ -11,6 +11,10 @@ info:
 servers:
   - url: /
 paths:
+  '/api/alerting/maintenance_window':
+    $ref: 'paths/api@alerting@maintenance_window.yaml'
+  '/api/alerting/maintenance_window/{maintenanceWindowId}':
+    $ref: 'paths/api@alerting@maintenance_window@{maintenancewindowid}.yaml'
   '/api/alerting/_health':
     $ref: paths/api@alerting@_health.yaml
   '/api/alerting/rule_types':

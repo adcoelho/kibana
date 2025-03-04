@@ -1,0 +1,53 @@
+title: Maintenance window response properties
+type: object
+required:
+  - id
+  - title
+  - enabled
+  - created_by
+  - created_at
+  - updated_by
+  - updated_at
+  - status
+properties:
+  id:
+    type: string
+    description: The identifier for the maintenance window.
+    example: b530fed0-74f5-11ed-9801-35303b735aef
+  title:
+    type: string
+    description: The name of the maintenance window.
+    example: ESQuery Maintenance Window
+  start:
+    type: string
+    description: The start date of the maintenance window.
+  duration:
+    type: number
+    description: The duration of the maintenance window.
+  enabled:
+    type: boolean
+    description: Indicates whether the maintenance window is currently enabled.
+    example: true
+  created_by:
+    type: string
+    description: The identifier for the user that created the maintenance window.
+    nullable: true
+    example: elastic
+  created_at:
+    type: string
+    description: The date and time in which the maintenance window was created.
+    format: date-time
+    example: '2022-12-05T23:36:58.284Z'
+  updated_by:
+    type: string
+    description: The identifier for the user that updated this maintenance window most recently.
+    nullable: true
+    example: elastic
+  updated_at:
+    type: string
+    description: The date and time that the maintenance window was updated most recently.
+    example: '2022-12-05T23:36:58.284Z'
+  status:
+    type: string
+    description: The status of the maintenance window. One of the following values `running`, `upcoming`, `finished` or `archived`.
+    example: running

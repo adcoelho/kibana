@@ -1,0 +1,29 @@
+title: Create maintenance window request body properties
+description: The properties used to create a maintenance window.
+type: object
+required:
+  - title
+  - start
+  - duration
+properties:
+  title:
+    type: string
+    description: >
+      The name of the maintenance window.
+      While this name does not have to be unique, a distinctive name can help you identify a maintenance window.
+  enabled:
+    type: boolean
+    description: Indicates whether the maintenance window is currently enabled.
+    example: true
+  duration:
+    type: number
+  start:
+    type: string
+    description: An ISO date.
+
+  # TODO - will change in future PRs
+  #
+  # scope:
+  #   $ref: 'scope.yaml'
+  # recurring:
+  #   $ref: 'recurring.yaml'
